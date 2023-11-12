@@ -46,7 +46,9 @@ import javafx.scene.layout.VBox;
 //
 //implements Initializable
 public class EffortLoggerMainUI {
-	
+	private Scene scene;
+	private Stage stage;
+	private Parent root;
 	private String connectionString;
 	private MongoDatabase db;
 	private MongoCollection<Document> col;
@@ -59,6 +61,9 @@ public class EffortLoggerMainUI {
 
     @FXML
     private Text welcome;
+    
+    @FXML
+    private Button addButton;
 	
 	//This method is called by the effortLoggerMainUIController in LoginController.java
 	//Allows us to send variables we want to send to other controller files
@@ -112,6 +117,22 @@ public class EffortLoggerMainUI {
 					e.printStackTrace();
 				}
 		}
+	}
+	
+	public void addPage(ActionEvent event) throws IOException
+	{
+		FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("LogAddition.fxml"));
+		
+		System.out.println("Switching to the Add Log Page");
+		root = fxmlLoader.load();
+		LogAdditionController effortLoggerAddLogController = fxmlLoader.getController();
+		effortLoggerAddLogController.recieveTransferedItems(connectionString, db, col, userCol, mongoClient, loginSystem);
+		
+		stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+		scene = new Scene(root);
+		stage.setTitle("Add Log");
+		stage.setScene(scene);
+		stage.show();
 	}
 
 

@@ -31,13 +31,14 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Indexes;
 
+import java.util.Date;
+
 import static com.mongodb.client.model.Filters.eq;
 
 import java.io.IOException;
 import java.security.Timestamp;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Updates.*;
 import static com.mongodb.client.model.Sorts.descending;
@@ -752,7 +753,7 @@ public class Main extends Application {
     //insert into logs collection in database we have to manually pass the db feel free to add more tags
     //to get the amounts of logs use col.count() and add 1 
     // example use: insertLog("Cole", 1, "description of user story", col.countDocuments() + 1, db)
-    public void insertLog(long userId, int projectId, int storyId, String details, MongoDatabase db) 
+    public static void insertLog(long userId, int projectId, int storyId, String details, Date startTime, MongoDatabase db) 
     {
     	
     	MongoCollection<Document> col = db.getCollection("logs");
@@ -763,7 +764,8 @@ public class Main extends Application {
         		.append("story-id", storyId)
         		.append("log-id", logId)
         		.append("details", details)
-        		.append("TimeStamp", new java.util.Date());
+        		.append("start-time", startTime)
+        		.append("end-time", new Date());
         col.insertOne(test);
         System.out.println("Log successfully added");
     }
@@ -834,7 +836,7 @@ public class Main extends Application {
     }
     
     //method finding the last of a certain collection
-    public FindIterable<Document> findLast(String colName, String sortParam, MongoDatabase db)
+    public static FindIterable<Document> findLast(String colName, String sortParam, MongoDatabase db)
     {
     	MongoCollection<Document> col = db.getCollection(colName);
     	FindIterable<Document> iterable;
@@ -843,7 +845,7 @@ public class Main extends Application {
     }
     
     //method that will return a new id number based off the last id of a certain collection
-    public int newId(String colName, String sortParam, MongoDatabase db) 
+    public static int newId(String colName, String sortParam, MongoDatabase db) 
     {
     	FindIterable<Document> bruh = findLast(colName, sortParam, db);
 		MongoCursor<Document> results = bruh.iterator();

@@ -15,7 +15,7 @@
    <children>
       <Text layoutX="31.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Your Logs: " wrappingWidth="70.9013671875" />
       <ButtonBar prefHeight="40.0" prefWidth="200.0" />
-      <Button layoutX="519.0" layoutY="109.0" mnemonicParsing="false" style="-fx-background-color: #02cc2e;" text="add new">
+      <Button layoutX="519.0" layoutY="109.0" mnemonicParsing="false" style="-fx-background-color: #02cc2e;" text="add new" id="addButton" onAction="#addPage">
          <font>
             <Font name="System Bold" size="10.0" />
          </font>
