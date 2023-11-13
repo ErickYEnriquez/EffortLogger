@@ -1,46 +1,25 @@
 package application;
-	
-import java.util.Scanner;
-import java.util.InputMismatchException;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.stage.Stage;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.ConnectionString;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoException;
-import com.mongodb.ServerApi;
-import com.mongodb.ServerApiVersion;
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Updates.set;
+
+import java.io.IOException;
+
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Indexes;
 
-import static com.mongodb.client.model.Filters.eq;
-
-import java.io.IOException;
-import java.security.Timestamp;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Updates.*;
-import static com.mongodb.client.model.Sorts.descending;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 
 /*
@@ -51,59 +30,60 @@ import static com.mongodb.client.model.Sorts.descending;
 
 
 public class Main extends Application {
-	
+
 	private boolean authorize = false;
-	
-	
+
+
     public static void main(String[] args) {
         launch(args);
     }
-    
-    public void start(Stage stage) throws IOException {
+
+    @Override
+	public void start(Stage stage) throws IOException {
     	FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
     	Parent fxml = fxmlLoader.load();
     	Scene scene = new Scene(fxml,900,600);
     	stage.setTitle("Login");
     	stage.setScene(scene);
     	stage.show();
-    
+
 
     	String connectionString = "mongodb+srv://ndlovelace13:7Cpa4yubfjj7aPql@effortlogger.zfgzhfr.mongodb.net/?retryWrites=true&w=majority";
     	MongoDatabase db;
-//    	
+//
 //    	MongoCollection<Document> col;
 //    	MongoCollection<Document> userCol;
-//    	
+//
 //    	// login system initialization
 //    	Login loginSystems = new Login();
-//    	
+//
 //    	//basic user stuff that James/Cole can link to login credentials later on
 //    	String currentUser = "";
 //    	long userId;
 //    	int userSecurity;
-//  
+//
 //    	int project = 1;
-//    	MongoClient mongoClient = MongoClients.create(connectionString); 
+//    	MongoClient mongoClient = MongoClients.create(connectionString);
 //            // Send a ping to confirm a successful connection
 //        	 db = mongoClient.getDatabase("Effortlogs");
 //             col = db.getCollection("logs");
 //             userCol = db.getCollection("users");
-//   
-//    	
-//    	
+//
+//
+//
 //    	//stuff needed for the big while loop
 //    	String continueChoice = "y";
 //    	int action = 0;
 //    	Scanner in = new Scanner(System.in);
-//    	//trying to connect the driver 
-    	
+//    	//trying to connect the driver
+
            //this second try is for anything mongo related
     			//finding the database and collection
                 //initializes the indexes necessary for phrase searching
 //            	searchInit(db);
-//                
+//
 //                System.out.println("Welcome to the EffortLogger V2 Prototype!\n");
-                
+
                 // login system
 //                while (!authorize)
 //                {
@@ -112,13 +92,13 @@ public class Main extends Application {
 //	                currentUser = in.nextLine();
 //	                System.out.println("Password: ");
 //	                String password = in.nextLine();
-//	                
+//
 //	                if (loginSystems.findUser(currentUser, password, db))
 //	                	authorize = true;
 //	                else
 //	                	System.out.println("Username or Password did not match. Try again");
 //                }
-//                
+//
 //                // retrieve all user info
 //        		FindIterable<Document> filterUsers = userCol.find(eq("username", currentUser));
 //        		MongoCursor<Document> userIterable = filterUsers.iterator();
@@ -127,7 +107,7 @@ public class Main extends Application {
 //                userId = Long.parseLong(targetObject.get("userID").toString());
 //
 //
-//                
+//
 //                //Main EffortLogger Loop (FOR NOW)
 //                while (continueChoice.equals("y"))
 //                {
@@ -142,7 +122,7 @@ public class Main extends Application {
 //                	System.out.println("7 = Delete a User");
 //                	System.out.println("8 = Update an Existing User");
 //                	System.out.println("9 = Print all Users");
-//                	
+//
 //                	Boolean confirm = false;
 //                	//verifying that an integer is entered that matches one of the 5 choices outlined above
 //                	while (!confirm)
@@ -158,7 +138,7 @@ public class Main extends Application {
 //                			{
 //                				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                			}
-//                			
+//
 //                		}
 //                		catch (InputMismatchException e)
 //                		{
@@ -170,7 +150,7 @@ public class Main extends Application {
 //                	String slChoice;
 //                	String title;
 //                	String details;
-//                	
+//
 //                	//This switch statement handles the 5 different options for db manipulation
 //                	//Each starts with a branching pathway to manipulate either the story or log collections
 //                	//The following instructions vary between pathways
@@ -178,7 +158,7 @@ public class Main extends Application {
 //                	{
 //                		case 1: //INSERT
 //                			System.out.println("adding a story or log!");
-//                			
+//
 //                			System.out.println("Would you like to add a story or log? Enter (S/L)\n");
 //                			slChoice = in.next().toLowerCase();
 //                			//input validation for s/l choice
@@ -208,7 +188,7 @@ public class Main extends Application {
 //                				insertLog(userId, project, 1, details, db);
 //                			}
 //
-//                			
+//
 //                			break;
 //                		case 2: //EDIT
 //                			System.out.println("editing a story or log!");
@@ -220,7 +200,7 @@ public class Main extends Application {
 //                        		System.out.println("Your input is invalid, please enter S/L");
 //                        		slChoice = in.next().toLowerCase();
 //                        	}
-//                			
+//
 //                			String param = "";
 //                			if (slChoice.equals("s"))
 //                			{
@@ -249,7 +229,7 @@ public class Main extends Application {
 //                        			{
 //                        				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                        			}
-//                        			
+//
 //                        		}
 //                        		catch (InputMismatchException e)
 //                        		{
@@ -264,7 +244,7 @@ public class Main extends Application {
 //                        	if (iterable.first() != null)
 //                        	{
 //                        		print(iterable);
-//                        		
+//
 //                        		if (slChoice.equals("logs"))
 //                        		{
 //                        			System.out.println("Starting editing process for logs");
@@ -283,18 +263,18 @@ public class Main extends Application {
 //                    							editChoice = "project-id";
 //                    							confirm = true;
 //                    							break;
-//                    							
+//
 //                    						case "s":
 //                    							editChoice = "story-id";
 //                    							confirm = true;
 //                    							break;
-//                    							
+//
 //                    						case "d":
 //                    							editChoice = "details";
 //                    							confirm = true;
 //                    							break;
-//                    					
-//                							
+//
+//
 //                							default:
 //                								System.out.println("Your input is invalid, please enter P/S/D");
 //                                        		editChoice = in.next().toLowerCase();
@@ -328,7 +308,7 @@ public class Main extends Application {
 //                                    			{
 //                                    				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                                    			}
-//                                    			
+//
 //                                    		}
 //                                    		catch (InputMismatchException e)
 //                                    		{
@@ -341,7 +321,7 @@ public class Main extends Application {
 //                					update(slChoice, editChoice, param, idNum, updatedPhrase, updatedNum, db);
 //                					System.out.println("Now printing your updated entry");
 //                					print(numSearch(slChoice, param, idNum, db));
-//                					
+//
 //                        		}
 //                        		else
 //                        		{
@@ -351,7 +331,7 @@ public class Main extends Application {
 //                        			System.out.println("For project-id, enter P");
 //                        			System.out.println("For title, enter T");
 //                        			System.out.println("For details, enter D");
-//                        			
+//
 //                					confirm = false;
 //                					String editChoice = in.next().toLowerCase();
 //                					while (!confirm)
@@ -362,18 +342,18 @@ public class Main extends Application {
 //                    							editChoice = "project-id";
 //                    							confirm = true;
 //                    							break;
-//                    							
+//
 //                    						case "t":
 //                    							editChoice = "title";
 //                    							confirm = true;
 //                    							break;
-//                    							
+//
 //                    						case "d":
 //                    							editChoice = "details";
 //                    							confirm = true;
 //                    							break;
-//                    					
-//                							
+//
+//
 //                							default:
 //                								System.out.println("Your input is invalid, please enter P/T/D");
 //                                        		editChoice = in.next().toLowerCase();
@@ -405,7 +385,7 @@ public class Main extends Application {
 //                                    			{
 //                                    				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                                    			}
-//                                    			
+//
 //                                    		}
 //                                    		catch (InputMismatchException e)
 //                                    		{
@@ -431,7 +411,7 @@ public class Main extends Application {
 //                        		System.out.println("Your input is invalid, please enter S/L");
 //                        		slChoice = in.next().toLowerCase();
 //                        	}
-//                			
+//
 //                			param = "";
 //                			if (slChoice.equals("s"))
 //                			{
@@ -443,7 +423,7 @@ public class Main extends Application {
 //                				slChoice = "logs";
 //                				param = "log-id";
 //                			}
-//                			
+//
 //                			System.out.println("Please enter the id number of the entry you would like to remove:");
 //                			idNum = 0;
 //                			//input validation on the id number entry
@@ -461,7 +441,7 @@ public class Main extends Application {
 //                        			{
 //                        				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                        			}
-//                        			
+//
 //                        		}
 //                        		catch (InputMismatchException e)
 //                        		{
@@ -481,12 +461,12 @@ public class Main extends Application {
 //                        		System.out.println("Your input is invalid, please enter S/L");
 //                        		slChoice = in.next().toLowerCase();
 //                        	}
-//                			
+//
 //                			if (slChoice.equals("s"))
 //                				slChoice = "stories";
 //                			else if (slChoice.equals("l"))
 //                				slChoice = "logs";
-//                			
+//
 //                			System.out.println("Would you like to search by a number or a phrase? Enter (N/P)");
 //                			String npChoice = in.next().toLowerCase();
 //                			//different search functions for numbers versus phrases due to var types and the way mongo handles searching
@@ -511,17 +491,17 @@ public class Main extends Application {
 //                							param = "user-id";
 //                							confirm = true;
 //                							break;
-//                						
+//
 //                						case "p":
 //                							param = "project-id";
 //                							confirm = true;
 //                							break;
-//                							
+//
 //                						case "s":
 //                							param = "story-id";
 //                							confirm = true;
 //                							break;
-//                						
+//
 //                						case "l":
 //                							if (slChoice.equals("stories"))
 //                							{
@@ -534,14 +514,14 @@ public class Main extends Application {
 //                								confirm = true;
 //                							}
 //                							break;
-//            							
+//
 //            							default:
 //            								System.out.println("Your input is invalid, please enter N/P");
 //                                    		idChoice = in.next().toLowerCase();
 //            								break;
 //            						}
 //            					}
-//            					
+//
 //            					System.out.println("Please enter the id number of the entry you would like to search for:");
 //                    			idNum = 0;
 //                    			confirm = false;
@@ -558,7 +538,7 @@ public class Main extends Application {
 //                            			{
 //                            				System.out.println("Your input is out of bounds, please enter a number from the above list:\n");
 //                            			}
-//                            			
+//
 //                            		}
 //                            		catch (InputMismatchException e)
 //                            		{
@@ -580,7 +560,7 @@ public class Main extends Application {
 //                			break;
 //                		case 5:
 //                			System.out.println("printing all stories or logs!");
-//                			
+//
 //                			System.out.println("Would you like to print all stories or logs? Enter (S/L)\n");
 //                			slChoice = in.next().toLowerCase();
 //                			//input validation for story vs. log choice
@@ -589,7 +569,7 @@ public class Main extends Application {
 //                        		System.out.println("Your input is invalid, please enter S/L");
 //                        		slChoice = in.next().toLowerCase();
 //                        	}
-//                			
+//
 //                			if (slChoice.equals("s"))
 //                				slChoice = "stories";
 //                			else if (slChoice.equals("l"))
@@ -598,9 +578,9 @@ public class Main extends Application {
 //                			System.out.println("Now printing all entries from " + slChoice + " collection:\n");
 //                			//call to the print function
 //                			printCol(slChoice, db);
-//                			
+//
 //                			break;
-//                		
+//
 //                		// adding new user
 //                		case 6:
 //                			if (userSecurity < 3) {
@@ -629,24 +609,24 @@ public class Main extends Application {
 //                				System.out.println("Invalid Security Level. Security level must be an integer between 0 and 4 inclusive\n");
 //                				securityLevel = in.nextInt();
 //                			}
-//                			
+//
 //                			loginSystems.addUser(username, password, securityLevel, db);
-//                			
+//
 //                			break;
-//                			
+//
 //                		case 7:
 //                			if (userSecurity < 2) {
 //                				System.out.println("Invalid Security Level");
 //                				break;
 //                			}
 //                			System.out.println("Please enter a userID to delete the user: \n");
-//                			
+//
 //                			long deleteID = in.nextLong();
-//                			
+//
 //                			loginSystems.deleteUser(deleteID, db);
 //                			System.out.println("User was Deleted");
 //                			break;
-//                			
+//
 //                		case 8:
 //                			if (userSecurity < 2) {
 //                				System.out.println("Invalid Security Level");
@@ -667,7 +647,7 @@ public class Main extends Application {
 //                				System.out.println("Password cannot be empty. Please reenter password: \n");
 //                				findPassword = in.nextLine();
 //                			}
-//                			
+//
 //                			System.out.println("Please enter a new username: \n");
 //                			String newUsername = in.nextLine();
 //                			while (newUsername.equals(""))
@@ -684,7 +664,7 @@ public class Main extends Application {
 //                			}
 //                			System.out.println("Please enter a userID: \n");
 //                			int newUserId = in.nextInt();
-//                			
+//
 //                			System.out.println("Please enter a security level: \n");
 //                			int newSecurityLevel = in.nextInt();
 //                			while (newSecurityLevel < 0 || newSecurityLevel > 4)
@@ -692,15 +672,15 @@ public class Main extends Application {
 //                				System.out.println("Invalid Security Level. Security level must be an integer between 0 and 4 inclusive: \n");
 //                				newSecurityLevel = in.nextInt();
 //                			}
-//                			
+//
 //                			boolean updated = loginSystems.updateUser(findUsername, findPassword, newUsername, newPassword, newUserId, newSecurityLevel, db);
-//                			
+//
 //                			if (updated)
 //                				System.out.println("User succesfully updated\n");
 //                			else
 //                				System.out.println("User not updated. Please recheck data entries and ensure this user exists already\n");
 //                			break;
-//                			
+//
 //                		// print all users in database
 //                		case 9:
 //                			if (userSecurity < 5) {
@@ -710,10 +690,10 @@ public class Main extends Application {
 //                			System.out.println("Now printing all users in database");
 //                			loginSystems.printUsers(db);
 //                			break;
-//                			
-//                			
+//
+//
 //                	} // end of switch
-//                	
+//
 //                	System.out.println("Would you like to continue using EffortLogger V2? (Y/N)");
 //                	continueChoice = in.next().toLowerCase();
 //                	//input validation for continue choice
@@ -725,12 +705,12 @@ public class Main extends Application {
 //                }
 //                //closing of scanner object
 //                in.close();
-                
- 
-       
-    	
+
+
+
+
     }
-    
+
     //necessary function for making certain tags searchable by phrase
     //if you want to add more tags that store strings, add them to this so they can be properly searched
     public void searchInit(MongoDatabase db)
@@ -748,13 +728,13 @@ public class Main extends Application {
     		System.out.println(results.next());
     	}
     }
-    
+
     //insert into logs collection in database we have to manually pass the db feel free to add more tags
-    //to get the amounts of logs use col.count() and add 1 
+    //to get the amounts of logs use col.count() and add 1
     // example use: insertLog("Cole", 1, "description of user story", col.countDocuments() + 1, db)
-    public void insertLog(long userId, int projectId, int storyId, String details, MongoDatabase db) 
+    public void insertLog(long userId, int projectId, int storyId, String details, MongoDatabase db)
     {
-    	
+
     	MongoCollection<Document> col = db.getCollection("logs");
     	//return the most recent item in the collection
     	int logId = newId("logs", "log-id", db);
@@ -769,10 +749,10 @@ public class Main extends Application {
     }
     //functions identically to the insertLog function, just services the story collection instead
     //as the story class has different values to be stored
-    public void insertStory(long userId, int projectId, String title, String description, MongoDatabase db) 
+    public void insertStory(long userId, int projectId, String title, String description, MongoDatabase db)
     {
-    	
-    	MongoCollection<Document> col = db.getCollection("stories"); 
+
+    	MongoCollection<Document> col = db.getCollection("stories");
     	//return a newId based on the last id in the collection
     	int storyId = newId("stories", "story-id", db);
         Document test = new Document("user-id",userId)
@@ -784,7 +764,7 @@ public class Main extends Application {
         col.insertOne(test);
         System.out.println("Story successfully added");
     }
-    
+
     //helps find every document in the database that matches a filter and data
     //this method is for searching numerical values, the data variable must be an integer
     //pass the database from the start method
@@ -800,9 +780,9 @@ public class Main extends Application {
     	}
     	return iterable;
     }
-    
+
     //helps find every document in the database that matches a filter and data
-    //If you are looking for a user who's name is AJ then filter variable would = user 
+    //If you are looking for a user who's name is AJ then filter variable would = user
     //data would = AJ
     //pass the database from the start method
     //returns an iterable that has all the documents found
@@ -818,7 +798,7 @@ public class Main extends Application {
     	}
     	return iterable;
     }
-    
+
     //prints all entries from the specified collection in json format
     public void printCol(String colName, MongoDatabase db)
     {
@@ -828,11 +808,11 @@ public class Main extends Application {
     	while(results.hasNext())
         {
         	System.out.println(results.next().toJson());
-       
+
         }
     	return;
     }
-    
+
     //method finding the last of a certain collection
     public FindIterable<Document> findLast(String colName, String sortParam, MongoDatabase db)
     {
@@ -841,9 +821,9 @@ public class Main extends Application {
     	iterable = col.find().limit(1).sort(descending(sortParam));
     	return iterable;
     }
-    
+
     //method that will return a new id number based off the last id of a certain collection
-    public int newId(String colName, String sortParam, MongoDatabase db) 
+    public int newId(String colName, String sortParam, MongoDatabase db)
     {
     	FindIterable<Document> bruh = findLast(colName, sortParam, db);
 		MongoCursor<Document> results = bruh.iterator();
@@ -851,8 +831,8 @@ public class Main extends Application {
 		newId++;
 		return newId;
     }
-    
-    
+
+
     //print all logs that were found and stored in an iterable, pairs well with the search and find functions
     public void print(FindIterable<Document> iterable) {
     	MongoCursor<Document> results = iterable.iterator();
@@ -861,7 +841,7 @@ public class Main extends Application {
         	System.out.println(results.next().toJson());
         }
     }
-    
+
     //finds the log we want to delete by log number then deletes it
     public void deleteEntry(int num, String colName, String param, MongoDatabase db){
     	MongoCollection<Document> col = db.getCollection(colName);
@@ -876,8 +856,8 @@ public class Main extends Application {
     		System.out.println(deleted.toJson());
     	}
     }
-    
-    //finds log by log number then sets attribute you decided in update string with data 
+
+    //finds log by log number then sets attribute you decided in update string with data
     public void update(String colName, String param, String idParam, int idNum, String updatedPhrase, int updatedNum, MongoDatabase db) {
     	MongoCollection<Document> col = db.getCollection(colName);
     	if(updatedPhrase == null)
@@ -889,5 +869,5 @@ public class Main extends Application {
     	}
     	System.out.println("We do a little updating");
     }
-    
+
 }
