@@ -9,12 +9,16 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -24,7 +28,10 @@ public class LoginController{
 	private Scene scene;
 	private Stage stage;
 	private Parent root;
+	private Stage currentStage;
 
+	@FXML
+	private AnchorPane anchorpane;
 	@FXML
 	private TextField username; //these variables have to have the same name as the ID in fxml file
 	@FXML
@@ -33,7 +40,6 @@ public class LoginController{
 	private Button submit;
 	@FXML
 	private Label failLabel;
-
 
 
 	//built this method assuming we have getters and setters in login java

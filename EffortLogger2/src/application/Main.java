@@ -38,16 +38,17 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
     @Override
 	public void start(Stage stage) throws IOException {
     	FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("login.fxml"));
+    	LoginController controller = fxmlLoader.getController();
     	Parent fxml = fxmlLoader.load();
     	Scene scene = new Scene(fxml,900,600);
     	stage.setTitle("Login");
     	stage.setScene(scene);
     	stage.show();
     }
+    
 
     //necessary function for making certain tags searchable by phrase
     //if you want to add more tags that store strings, add them to this so they can be properly searched
